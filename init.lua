@@ -19,7 +19,6 @@ vim.pack.add {
 	'https://github.com/ibhagwan/fzf-lua',
     'https://github.com/stevearc/oil.nvim',
     'https://github.com/nvim-mini/mini.nvim',
-    'https://github.com/Mofiqul/vscode.nvim',
 }
 
 vim.cmd.packadd('nvim.undotree') -- `:Undotree`
@@ -78,16 +77,6 @@ require('mini.pairs').setup({}) -- autopairs
 require('mini.surround').setup({}) -- visual mode 
 require('mini.comment').setup({}) -- better comments 
 -- require('mini.move').setup({}) -- move char, words, blocks etc 
-
--- theme
-require('vscode').setup({
-    styles = {
-        comments = { italic = true },
-        terminal_colors = true,
-    },
-})
--- vim.cmd.colorscheme 'vscode'
-
 
 --------------------
 -- AUTOCOMMAND HOOKS
@@ -257,7 +246,3 @@ vim.lsp.config('lua_ls', {
 		},
 	},
 })
-
-
-
-
