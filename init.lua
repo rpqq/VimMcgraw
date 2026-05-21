@@ -246,3 +246,8 @@ vim.lsp.config('lua_ls', {
 		},
 	},
 })
+
+-------
+-- Theme
+-------
+-- :colorscheme xxxxx
