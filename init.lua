@@ -35,7 +35,9 @@ require('mason-tool-installer').setup({
         "pyright",
         "jsonls",
         "ts_ls",
-        'clangd'
+        'clangd',
+        'prettier',
+        'black'
     }
 })
 
