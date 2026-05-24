@@ -1,6 +1,5 @@
 ----------------------
 -- PLUGINS
-----------------------
 vim.pack.add {
     'https://github.com/nvim-treesitter/nvim-treesitter',
     'https://github.com/nvim-lua/plenary.nvim',
@@ -25,7 +24,6 @@ vim.cmd.packadd('nvim.undotree') -- `:Undotree`
 
 ----------------------
 -- PLUGIN 'REQUIREMENTS'
-----------------------
 require('mason').setup()
 require('mason-lspconfig').setup()
 require('mason-tool-installer').setup({
@@ -82,7 +80,6 @@ require('mini.comment').setup({}) -- better comments
 
 --------------------
 -- AUTOCOMMAND HOOKS
---------------------
 vim.api.nvim_create_autocmd('LspAttach', {
   callback = function(ev)
     local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
@@ -120,61 +117,69 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     end,
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "*",
+  callback = function()
+    vim.opt_local.formatoptions:remove({ "r", "o" })
+  end,
+})
+
 -------------
 -- KEYMAPPING
--------------
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>') -- clear HL on <esc>
+
+local map = vim.keymap.set
 local opts = { noremap = true, silent = true } -- prevent unexpected behaviour
-vim.keymap.set('n', '<leader>w', ":w<CR>") -- general vim defaults
-vim.keymap.set('n', '<leader>wq', ":wq!<CR>")
-vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", opts) -- vs code like movement
-vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv", opts)
-vim.keymap.set("n", "<leader>sv", ":vsplit<CR>") -- split windows
-vim.keymap.set("n", "<leader>sh", ":split<CR>")
-vim.keymap.set('n', '<C-k>', ':wincmd k<CR>') -- navigate between windows
-vim.keymap.set('n', '<C-j>', ':wincmd j<CR>')
-vim.keymap.set('n', '<C-h>', ':wincmd h<CR>')
-vim.keymap.set('n', '<C-l>', ':wincmd l<CR>')
-vim.keymap.set('v', '<leader>y', '"+y', opts) -- yoink to clipboard
-vim.keymap.set('n', '<leader>y', '"+y,', opts)
-vim.keymap.set('n', '<leader>Y', 'gg"yG', opts)
-vim.keymap.set('n', '<left>', '<cmd>echo "h"<CR>') -- disable keys in arrow mode
-vim.keymap.set('n', '<right>', '<cmd>echo "l"<CR>')
-vim.keymap.set('n', '<up>', '<cmd>echo "k"<CR>')
-vim.keymap.set('n', '<down>', '<cmd>echo "j"<CR>')
-vim.keymap.set('n', 'n', 'nzzzv') -- find and center
-vim.keymap.set('n', 'N', 'Nzzzv')
-vim.keymap.set('n', '<C-d>', '<C-d>zz', opts) -- vertical scroll and center
-vim.keymap.set('n', '<C-u>', '<C-u>zz', opts)
-vim.keymap.set('n', '<leader>lw', '<cmd>set wrap!<CR>', opts) -- toggle line wrapping
+map('n', '<leader>o', ':update<CR> :source<CR>')
+map('n', '<leader>w', ":w<CR>") -- general vim defaults
+map('n', '<Esc>', '<cmd>nohlsearch<CR>') -- clear HL on <esc>
+map('n', '<leader>wq', ":wq!<CR>") -- ragequit
+map('v', 'K', ":m '<-2<CR>gv=gv", opts) -- vs code like movement
+map('v', 'J', ":m '>+1<CR>gv=gv", opts)
+map("n", "<leader>sv", ":vsplit<CR>") -- split windows
+map("n", "<leader>sh", ":split<CR>")
+map('n', '<C-k>', ':wincmd k<CR>') -- navigate between windows
+map('n', '<C-j>', ':wincmd j<CR>')
+map('n', '<C-h>', ':wincmd h<CR>')
+map('n', '<C-l>', ':wincmd l<CR>')
+map('v', '<leader>y', '"+y', opts) -- yoink to clipboard
+map('n', '<leader>y', '"+y,', opts)
+map('n', '<leader>Y', 'gg"yG', opts)
+map('n', '<left>', '<cmd>echo "h"<CR>') -- disable keys in arrow mode
+map('n', '<right>', '<cmd>echo "l"<CR>')
+map('n', '<up>', '<cmd>echo "k"<CR>')
+map('n', '<down>', '<cmd>echo "j"<CR>')
+map('n', 'n', 'nzzzv') -- find and center
+map('n', 'N', 'Nzzzv')
+map('n', '<C-d>', '<C-d>zz', opts) -- vertical scroll and center
+map('n', '<C-u>', '<C-u>zz', opts)
+map('n', '<leader>lw', '<cmd>set wrap!<CR>', opts) -- toggle line wrapping
 -- Debug Keymaps
 local dap = require('dap')
-vim.keymap.set("n", "<C-b>", dap.toggle_breakpoint, { desc = "DAP toggle breakpoint" })
-vim.keymap.set("n", "<F4>", "<cmd>DapViewToggle<CR>", { desc = "Toggle DAP view" })
-vim.keymap.set("n", "<F5>", dap.continue, { desc = "DAP continue" })
-vim.keymap.set("n", "<F10>", dap.step_over, { desc = "DAP step over" })
-vim.keymap.set("n", "<F11>", dap.step_into, { desc = "DAP step into" })
-vim.keymap.set("n", "<F12>", dap.step_out, { desc = "DAP step out" })
+map("n", "<C-b>", dap.toggle_breakpoint, { desc = "DAP toggle breakpoint" })
+map("n", "<F4>", "<cmd>DapViewToggle<CR>", { desc = "Toggle DAP view" })
+map("n", "<F5>", dap.continue, { desc = "DAP continue" })
+map("n", "<F10>", dap.step_over, { desc = "DAP step over" })
+map("n", "<F11>", dap.step_into, { desc = "DAP step into" })
+map("n", "<F12>", dap.step_out, { desc = "DAP step out" })
 -- Plugin keymaps
 local fzf = require('fzf-lua') -- fzf
-vim.keymap.set('n', '<leader>ff', fzf.files, opt)
-vim.keymap.set('n', '<leader>fg', fzf.live_grep, opt)
-vim.keymap.set('n', '<leader>fb', fzf.buffers, opt)
-vim.keymap.set('n', '<leader>fh', fzf.help_tags, opt)
-vim.keymap.set('n', '<leader>fx', fzf.diagnostics_document, opt)
-vim.keymap.set('n', '<leader>fX', fzf.diagnostics_workspace, opt)
+map('n', '<leader>ff', fzf.files, opt)
+map('n', '<leader>fg', fzf.live_grep, opt)
+map('n', '<leader>fb', fzf.buffers, opt)
+map('n', '<leader>fh', fzf.help_tags, opt)
+map('n', '<leader>fx', fzf.diagnostics_document, opt)
+map('n', '<leader>fX', fzf.diagnostics_workspace, opt)
 -- Oil keymaps
-vim.keymap.set('n', '\\', ':Oil<CR>', opts) -- oil
-
-vim.keymap.set('n', '<leader>tm', function()
+map('n', '\\', ':Oil<CR>', opts) -- oil
+-- Tmux
+map('n', '<leader>tm', function()
     vim.fn.system("tmux neww tmux-sessionizer")
 end)
 
 -----------
 -- OPTIONS
------------
 vim.o.number = true -- see line numbers
 vim.o.relativenumber = true -- relative
 vim.o.scrolloff = 20 -- sets amount of lines you can see above scroll
@@ -226,7 +231,6 @@ vim.keymap.set('n', 'gl', vim.diagnostic.open_float)
 
 -------
 -- LSP
--------
 vim.lsp.config('lua_ls', {
 	settings = {
 		Lua = {
@@ -251,5 +255,4 @@ vim.lsp.config('lua_ls', {
 
 -------
 -- Theme
--------
--- :colorscheme xxxxx
+vim.cmd.colorscheme('habamax')
