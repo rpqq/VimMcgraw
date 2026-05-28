@@ -18,6 +18,8 @@ vim.pack.add {
 	'https://github.com/ibhagwan/fzf-lua',
     'https://github.com/stevearc/oil.nvim',
     'https://github.com/nvim-mini/mini.nvim',
+    --
+    'https://github.com/chomosuke/typst-preview.nvim'
 }
 
 vim.cmd.packadd('nvim.undotree') -- `:Undotree`
@@ -35,7 +37,8 @@ require('mason-tool-installer').setup({
         "ts_ls",
         'clangd',
         'prettier',
-        'black'
+        'black',
+        'tinymist'
     }
 })
 
@@ -70,11 +73,11 @@ require('oil').setup({
     },
     win_options = {
         wrap = true
-    }
+    },
 })
 
 require('mini.pairs').setup({}) -- autopairs
-require('mini.surround').setup({}) -- visual mode 
+require('mini.surround').setup({}) -- surroundings 
 require('mini.comment').setup({}) -- better comments 
 -- require('mini.move').setup({}) -- move char, words, blocks etc 
 
@@ -99,7 +102,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 vim.api.nvim_create_autocmd("BufReadPost", {
     group = vim.api.nvim_create_augroup('restore_cursor', {clear = true }),
-    desc = "Restore last cursor pos",
+    desc = "Restore last cursor position",
     callback = function()
         if vim.o.diff then -- except in diff mode
             return
@@ -131,7 +134,7 @@ vim.g.maplocalleader = ' '
 
 local map = vim.keymap.set
 local opts = { noremap = true, silent = true } -- prevent unexpected behaviour
-map('n', '<leader>o', ':update<CR> :source<CR>')
+map('n', '<leader>ss', ':update<CR> :source<CR>')
 map('n', '<leader>w', ":w<CR>") -- general vim defaults
 map('n', '<Esc>', '<cmd>nohlsearch<CR>') -- clear HL on <esc>
 map('n', '<leader>wq', ":wq!<CR>") -- ragequit
