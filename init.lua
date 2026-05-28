@@ -10,8 +10,8 @@ vim.pack.add {
     'https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim',
     --
     "https://github.com/mfussenegger/nvim-dap",
-    "https://github.com/theHamsta/nvim-dap-virtual-text",
     "https://github.com/igorlfs/nvim-dap-view",
+    "https://github.com/theHamsta/nvim-dap-virtual-text",
     "https://github.com/mfussenegger/nvim-dap-python",
     -- 
     'https://github.com/tpope/vim-fugitive',
@@ -44,6 +44,17 @@ require('mason-tool-installer').setup({
 
 require("dap-view").setup()
 require("dap-python").setup("python")
+
+require("nvim-dap-virtual-text").setup({
+    enabled = true,
+    enabled_commands = true,
+    highlight_changed_variables = true,
+    highlight_new_as_changed = false,
+    virt_text_pos = 'inline'
+
+
+
+})
 
 require("fzf-lua").setup({
   -- use exact string matching, but only for the files picker
@@ -80,6 +91,7 @@ require('mini.pairs').setup({}) -- autopairs
 require('mini.surround').setup({}) -- surroundings 
 require('mini.comment').setup({}) -- better comments 
 -- require('mini.move').setup({}) -- move char, words, blocks etc 
+-- require('mini.jump').setup({}) -- move char, words, blocks etc 
 
 --------------------
 -- AUTOCOMMAND HOOKS
@@ -231,30 +243,6 @@ vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- use treesitter for foldi
 vim.opt.foldlevel = 99 -- start with all folds open
 --
 vim.keymap.set('n', 'gl', vim.diagnostic.open_float)
-
--------
--- LSP
-vim.lsp.config('lua_ls', {
-	settings = {
-		Lua = {
-			runtime = {
-				version = 'LuaJIT',
-			},
-			diagnostics = {
-				globals = {
-					'vim',
-					'require'
-				},
-			},
-			workspace = {
-				library = vim.api.nvim_get_runtime_file("", true),
-			},
-			telemetry = {
-				enable = false,
-			},
-		},
-	},
-})
 
 -------
 -- Theme
