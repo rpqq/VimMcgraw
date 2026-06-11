@@ -19,7 +19,11 @@ vim.pack.add {
     'https://github.com/stevearc/oil.nvim',
     'https://github.com/nvim-mini/mini.nvim',
     --
-    'https://github.com/chomosuke/typst-preview.nvim'
+    'https://github.com/chomosuke/typst-preview.nvim',
+    {
+        src = 'https://github.com/ThePrimeagen/harpoon',
+        version = 'harpoon2'
+    }
 }
 
 vim.cmd.packadd('nvim.undotree') -- `:Undotree`
@@ -91,7 +95,7 @@ require('mini.pairs').setup({}) -- autopairs
 require('mini.surround').setup({}) -- surroundings 
 require('mini.comment').setup({}) -- better comments 
 -- require('mini.move').setup({}) -- move char, words, blocks etc 
--- require('mini.jump').setup({}) -- move char, words, blocks etc 
+-- require('mini.jump').setup({}) -- extends t,f,T,F 
 
 --------------------
 -- AUTOCOMMAND HOOKS
@@ -133,7 +137,8 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = "*",
+    desc = "stop newline comment cont.",
+    pattern = "*",
   callback = function()
     vim.opt_local.formatoptions:remove({ "r", "o" })
   end,
@@ -186,12 +191,27 @@ map('n', '<leader>fb', fzf.buffers, opt)
 map('n', '<leader>fh', fzf.help_tags, opt)
 map('n', '<leader>fx', fzf.diagnostics_document, opt)
 map('n', '<leader>fX', fzf.diagnostics_workspace, opt)
+-- .typ
+map('n', '<leader>tt', ':TypstPreview<CR>')
 -- Oil keymaps
 map('n', '\\', ':Oil<CR>', opts) -- oil
 -- Tmux
 map('n', '<leader>tm', function()
     vim.fn.system("tmux neww tmux-sessionizer")
 end)
+-- Harpoon
+local harpoon = require("harpoon")
+-- REQUIRED
+harpoon:setup()
+-- REQUIRED
+vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end) -- defaults
+vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+vim.keymap.set("n", "<C-1>", function() harpoon:list():select(1) end) -- quick jump
+vim.keymap.set("n", "<C-2>", function() harpoon:list():select(2) end)
+vim.keymap.set("n", "<C-3>", function() harpoon:list():select(3) end)
+vim.keymap.set("n", "<C-4>", function() harpoon:list():select(4) end)
+vim.keymap.set("n", "<C-[>", function() harpoon:list():prev() end) -- Toggle prev/next buffer in harpoon list
+vim.keymap.set("n", "<C-]>", function() harpoon:list():next() end)
 
 -----------
 -- OPTIONS
@@ -214,7 +234,7 @@ vim.opt.statusline = '%F' -- statusline
 vim.opt.smoothscroll = true
 -- 
 vim.opt.completeopt = { "menu", "menuone", "noselect"} -- autocomplete menu
--- vim.o.pumheight = 5 -- autocomplete suggestions max.
+vim.o.pumheight = 10 -- autocomplete suggestions max.
 vim.opt.complete:append('o') -- ?
 --
 vim.o.autoindent = true -- copy indent from current line when starting \n
