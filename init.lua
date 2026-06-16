@@ -14,19 +14,24 @@ vim.pack.add {
     "https://github.com/theHamsta/nvim-dap-virtual-text",
     "https://github.com/mfussenegger/nvim-dap-python",
     -- 
+    'https://github.com/akinsho/toggleterm.nvim',
     'https://github.com/tpope/vim-fugitive',
 	'https://github.com/ibhagwan/fzf-lua',
     'https://github.com/stevearc/oil.nvim',
     'https://github.com/nvim-mini/mini.nvim',
-    --
-    'https://github.com/chomosuke/typst-preview.nvim',
     {
         src = 'https://github.com/ThePrimeagen/harpoon',
         version = 'harpoon2'
-    }
+    },
+    --
+    'https://github.com/obsidian-nvim/obsidian.nvim',
+    'https://github.com/3rd/image.nvim',
+    'https://github.com/chomosuke/typst-preview.nvim',
+    'https://github.com/brenoprata10/nvim-highlight-colors',
 }
 
 vim.cmd.packadd('nvim.undotree') -- `:Undotree`
+
 
 ----------------------
 -- PLUGIN 'REQUIREMENTS'
@@ -55,9 +60,6 @@ require("nvim-dap-virtual-text").setup({
     highlight_changed_variables = true,
     highlight_new_as_changed = false,
     virt_text_pos = 'inline'
-
-
-
 })
 
 require("fzf-lua").setup({
@@ -91,11 +93,52 @@ require('oil').setup({
     },
 })
 
-require('mini.pairs').setup({}) -- autopairs
-require('mini.surround').setup({}) -- surroundings 
+-- Ensure termguicolors is enabled if not already
+vim.opt.termguicolors = true
+require('nvim-highlight-colors').setup({})
+
+require("toggleterm").setup({
+    direction = "float",
+    -- open_mapping = [[<c>-\>]],
+})
+
 require('mini.comment').setup({}) -- better comments 
--- require('mini.move').setup({}) -- move char, words, blocks etc 
--- require('mini.jump').setup({}) -- extends t,f,T,F 
+require('mini.pairs').setup({}) -- autopairs
+require('mini.surround').setup({
+    custom_surroundings = {
+    ["="] = {
+      input = { "%=%=", "%=%=" },
+      output = { left = "==", right = "==" },
+    },
+  },
+}) -- surroundings 
+
+require("image").setup({
+  backend = "kitty",
+  processor = "magick_cli",
+  max_width_window_percentage = 70,
+  -- max_height_window_percentage = 30,
+  integrations = {
+    markdown = {
+      enabled = true,
+      clear_in_insert_mode = true
+    },
+  },
+})
+
+
+
+require("obsidian").setup({
+    dir = '/Users/riaz/Documents/Vaults/CS2 Vault',
+    legacy_commands = false,
+    templates = {
+        folder = '/Users/riaz/Documents/Vaults/CS2 Vault/99 Templates/General',
+        date_format = "%Y-%m-%d",
+        time_format = "%H:%M"
+    }
+})
+
+
 
 --------------------
 -- AUTOCOMMAND HOOKS
@@ -142,6 +185,26 @@ vim.api.nvim_create_autocmd("FileType", {
   callback = function()
     vim.opt_local.formatoptions:remove({ "r", "o" })
   end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+    desc = "set wrap auto on md files",
+    callback = function()
+        vim.opt_local.wrap = true
+        vim.opt_local.linebreak = true
+        vim.opt_local.breakindent = true
+    end,
+})
+
+vim.api.nvim_create_autocmd( { "BufEnter", "WinEnter" }, {
+    callback = function()
+        local ft = vim.bo.filetype
+        if ft ~= "markdown" then
+            pcall(function()
+                require("image").clear()
+            end)
+        end
+    end,
 })
 
 -------------
@@ -192,18 +255,20 @@ map('n', '<leader>fh', fzf.help_tags, opt)
 map('n', '<leader>fx', fzf.diagnostics_document, opt)
 map('n', '<leader>fX', fzf.diagnostics_workspace, opt)
 -- .typ
-map('n', '<leader>tt', ':TypstPreview<CR>')
--- Oil keymaps
-map('n', '\\', ':Oil<CR>', opts) -- oil
--- Tmux
+map('n', '<leader>ty', ':TypstPreview<CR>')
+-- oil
+-- map('n', '\\', ':Oil<CR>', opts) -- oil
+map("n", '\\', function()
+    require("oil").open_float()
+end)
+
+-- tmux
 map('n', '<leader>tm', function()
     vim.fn.system("tmux neww tmux-sessionizer")
 end)
--- Harpoon
+-- harpoon
 local harpoon = require("harpoon")
--- REQUIRED
 harpoon:setup()
--- REQUIRED
 vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end) -- defaults
 vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
 vim.keymap.set("n", "<C-1>", function() harpoon:list():select(1) end) -- quick jump
@@ -212,6 +277,13 @@ vim.keymap.set("n", "<C-3>", function() harpoon:list():select(3) end)
 vim.keymap.set("n", "<C-4>", function() harpoon:list():select(4) end)
 vim.keymap.set("n", "<C-[>", function() harpoon:list():prev() end) -- Toggle prev/next buffer in harpoon list
 vim.keymap.set("n", "<C-]>", function() harpoon:list():next() end)
+-- toggleterm
+vim.keymap.set("n", "<leader>tt", "<cmd>ToggleTerm<cr>")
+vim.keymap.set("n", "<leader>th", "<cmd>ToggleTerm direction=horizontal<cr>")
+-- markview
+vim.keymap.set("n", "<leader>mv", ':Markview<CR>')
+-- obsidian
+
 
 -----------
 -- OPTIONS
@@ -227,11 +299,11 @@ vim.o.linebreak = true -- companion to wrap, don't split words
 vim.o.splitright = true -- force all vertical splits to go right of current window
 vim.o.splitbelow = true -- force all horizontal splits to go below current line
 vim.o.signcolumn = 'yes' -- Keep signcolumn on by default to show warnings etc 
-vim.opt.termguicolors = true -- terminal colours
 vim.o.inccommand = 'split' -- Preview substitutions live, as you type!
 vim.o.cursorline = false -- highlight current line
 vim.opt.statusline = '%F' -- statusline
 vim.opt.smoothscroll = true
+vim.opt.conceallevel = 2
 -- 
 vim.opt.completeopt = { "menu", "menuone", "noselect"} -- autocomplete menu
 vim.o.pumheight = 10 -- autocomplete suggestions max.
@@ -264,6 +336,9 @@ vim.opt.foldlevel = 99 -- start with all folds open
 --
 vim.keymap.set('n', 'gl', vim.diagnostic.open_float)
 
+
 -------
 -- Theme
 vim.cmd.colorscheme('habamax')
+
+
