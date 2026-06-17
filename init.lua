@@ -25,6 +25,8 @@ vim.pack.add {
     },
     --
     'https://github.com/obsidian-nvim/obsidian.nvim',
+    'https://github.com/MeanderingProgrammer/render-markdown.nvim',
+    'https://github.com/bullets-vim/bullets.vim',
     'https://github.com/3rd/image.nvim',
     'https://github.com/chomosuke/typst-preview.nvim',
     'https://github.com/brenoprata10/nvim-highlight-colors',
@@ -49,6 +51,22 @@ require('mason-tool-installer').setup({
         'black',
         'tinymist'
     }
+})
+
+-- npm install -g tree-sitter-cli
+require("nvim-treesitter").install({
+  "markdown",
+  "markdown_inline",
+  "python",
+  "cpp"
+})
+
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+  callback = function()
+    vim.api.nvim_set_hl(0, "@markup.raw.block.markdown", { link = "Normal" })
+    vim.api.nvim_set_hl(0, "@text.literal.markdown", { link = "Normal" })
+  end,
 })
 
 require("dap-view").setup()
@@ -104,6 +122,7 @@ require("toggleterm").setup({
 
 require('mini.comment').setup({}) -- better comments 
 require('mini.pairs').setup({}) -- autopairs
+require('mini.icons').setup({}) -- icons
 require('mini.surround').setup({
     custom_surroundings = {
     ["="] = {
@@ -126,18 +145,40 @@ require("image").setup({
   },
 })
 
-
-
 require("obsidian").setup({
-    dir = '/Users/riaz/Documents/Vaults/CS2 Vault',
+    dir = '~/Documents/Vaults/CS2 Vault',
     legacy_commands = false,
     templates = {
-        folder = '/Users/riaz/Documents/Vaults/CS2 Vault/99 Templates/General',
+        folder = '99 Templates/General',
+    },
+    daily_notes = {
+        folder = "01 Daily",
         date_format = "%Y-%m-%d",
-        time_format = "%H:%M"
+        template = "{date}",
+    },
+    frontmatter = {
+        enabled = false
     }
 })
 
+require("render-markdown").setup({
+    code = {
+        sign = false;
+        width = "block",
+        right_pad = 2,
+        left_pad = 2
+    },
+    quote = {
+        -- enabled = true,
+        icon = '▋'
+    }
+})
+
+vim.g.bullets_enabled_file_types = {
+  "markdown",
+  "text",
+  "gitcommit",
+}
 
 
 --------------------
@@ -214,7 +255,7 @@ vim.g.maplocalleader = ' '
 
 local map = vim.keymap.set
 local opts = { noremap = true, silent = true } -- prevent unexpected behaviour
-map('n', '<leader>ss', ':update<CR> :source<CR>')
+map('n', '<leader>ss', ':w<CR> :update<CR> :source<CR>')
 map('n', '<leader>w', ":w<CR>") -- general vim defaults
 map('n', '<Esc>', '<cmd>nohlsearch<CR>') -- clear HL on <esc>
 map('n', '<leader>wq', ":wq!<CR>") -- ragequit
@@ -257,10 +298,7 @@ map('n', '<leader>fX', fzf.diagnostics_workspace, opt)
 -- .typ
 map('n', '<leader>ty', ':TypstPreview<CR>')
 -- oil
--- map('n', '\\', ':Oil<CR>', opts) -- oil
-map("n", '\\', function()
-    require("oil").open_float()
-end)
+map('n', '\\', ':Oil<CR>', opts) -- oil
 
 -- tmux
 map('n', '<leader>tm', function()
@@ -283,7 +321,8 @@ vim.keymap.set("n", "<leader>th", "<cmd>ToggleTerm direction=horizontal<cr>")
 -- markview
 vim.keymap.set("n", "<leader>mv", ':Markview<CR>')
 -- obsidian
-
+map('n', '<leader>on', ':Obsidian template _templateNoteSimple<CR>')
+map('n', '<leader>od', ':Obsidian template {date}<CR>')
 
 -----------
 -- OPTIONS
