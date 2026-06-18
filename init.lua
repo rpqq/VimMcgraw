@@ -151,11 +151,6 @@ require("obsidian").setup({
     templates = {
         folder = '99 Templates/General',
     },
-    daily_notes = {
-        folder = "01 Daily",
-        date_format = "%Y-%m-%d",
-        template = "{date}",
-    },
     frontmatter = {
         enabled = false
     }
@@ -166,11 +161,20 @@ require("render-markdown").setup({
         sign = false;
         width = "block",
         right_pad = 2,
-        left_pad = 2
+        left_pad = 2,
+        above = '▄',
+        -- Used below code blocks for thin border.
+        below = '▀',
     },
-    quote = {
-        -- enabled = true,
-        icon = '▋'
+    heading = {
+        icons = {
+            "󰉫 ",
+            "󰉬 ",
+            "󰉭 ",
+            "󰉮 ",
+            "󰉯 ",
+            "󰉰 ",
+        }
     }
 })
 
@@ -179,7 +183,6 @@ vim.g.bullets_enabled_file_types = {
   "text",
   "gitcommit",
 }
-
 
 --------------------
 -- AUTOCOMMAND HOOKS
@@ -279,6 +282,7 @@ map('n', 'N', 'Nzzzv')
 map('n', '<C-d>', '<C-d>zz', opts) -- vertical scroll and center
 map('n', '<C-u>', '<C-u>zz', opts)
 map('n', '<leader>lw', '<cmd>set wrap!<CR>', opts) -- toggle line wrapping
+map('n', '<leader>sw', ':set wrap<CR>', opts) -- set wrap
 -- Debug Keymaps
 local dap = require('dap')
 map("n", "<C-b>", dap.toggle_breakpoint, { desc = "DAP toggle breakpoint" })
@@ -323,6 +327,7 @@ vim.keymap.set("n", "<leader>mv", ':Markview<CR>')
 -- obsidian
 map('n', '<leader>on', ':Obsidian template _templateNoteSimple<CR>')
 map('n', '<leader>od', ':Obsidian template {date}<CR>')
+map("n", "gf", "<cmd>Obsidian follow_link<CR>")
 
 -----------
 -- OPTIONS
@@ -379,5 +384,4 @@ vim.keymap.set('n', 'gl', vim.diagnostic.open_float)
 -------
 -- Theme
 vim.cmd.colorscheme('habamax')
-
 
