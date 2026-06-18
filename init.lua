@@ -28,6 +28,7 @@ vim.pack.add {
     'https://github.com/MeanderingProgrammer/render-markdown.nvim',
     'https://github.com/bullets-vim/bullets.vim',
     'https://github.com/3rd/image.nvim',
+    'https://github.com/HakonHarnes/img-clip.nvim',
     'https://github.com/chomosuke/typst-preview.nvim',
     'https://github.com/brenoprata10/nvim-highlight-colors',
 }
@@ -141,6 +142,20 @@ require("image").setup({
     markdown = {
       enabled = true,
       clear_in_insert_mode = true
+    },
+  },
+})
+
+require("img-clip").setup({
+  default = {
+    dir_path = vim.fn.expand("~/Documents/Obsidian/Assets/Images"),
+    relative_to_current_file = true,
+    prompt_for_file_name = false,
+  },
+
+  filetypes = {
+    markdown = {
+      template = "![$CURSOR]($FILE_PATH)",
     },
   },
 })
