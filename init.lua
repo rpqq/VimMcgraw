@@ -17,7 +17,7 @@ vim.pack.add {
     'https://github.com/akinsho/toggleterm.nvim',
     'https://github.com/tpope/vim-fugitive',
 	'https://github.com/ibhagwan/fzf-lua',
-    'https://github.com/stevearc/oil.nvim',
+    'https://github.com/nvim-tree/nvim-tree.lua',
     'https://github.com/nvim-mini/mini.nvim',
     {
         src = 'https://github.com/ThePrimeagen/harpoon',
@@ -98,17 +98,12 @@ require("fzf-lua").setup({
   },
 })
 
-require('oil').setup({
-    keymaps = { ['<C-h>'] = false },
-    columns = { 'size', 'mtime'},
-    delete_to_trash = true,
-    skip_confirm_for_simple_edits = true,
-    view_options = {
-        show_hidden = true,
-        natural_order = true,
+require('nvim-tree').setup({
+    view = {
+        width = 35,
     },
-    win_options = {
-        wrap = true
+    renderer = {
+        group_empty = true,
     },
 })
 
@@ -316,8 +311,10 @@ map('n', '<leader>fx', fzf.diagnostics_document, opt)
 map('n', '<leader>fX', fzf.diagnostics_workspace, opt)
 -- .typ
 map('n', '<leader>ty', ':TypstPreview<CR>')
--- oil
-map('n', '\\', ':Oil<CR>', opts) -- oil
+-- nvim-tree
+map('n', '\\', "<cmd>NvimTreeToggle<CR>", {
+    silent = true,
+})
 
 -- tmux
 map('n', '<leader>tm', function()
